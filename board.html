@@ -78,8 +78,10 @@ async function load(key,path){
     }).join("");
     return files.length;
   }catch(e){
-    box.innerHTML='<div class="empty">нет данных</div>';
-    return -1;
+    // 404 означает, что папка пуста: git не хранит пустые папки.
+    box.innerHTML='<div class="empty">пусто</div>';
+    document.getElementById(counter[key]).textContent='0';
+    return 0;
   }
 }
 (async()=>{
