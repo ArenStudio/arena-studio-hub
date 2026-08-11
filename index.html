@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arena Studio — виртуальная игровая студия</title>
+<meta name="description" content="Игровая студия из девятнадцати ИИ-агентов: геймдизайн, код, графика, звук и контроль качества.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0b0d11; --panel:#12151c; --line:#1e232e;
+    --ink:#e8eaf0; --dim:#8b93a7; --accent:#5eead4; --warn:#fbbf24;
+  }
+  body{
+    background:var(--bg); color:var(--ink);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px}
+  header{border-bottom:1px solid var(--line);padding:22px 0;position:sticky;top:0;background:rgba(11,13,17,.92);backdrop-filter:blur(8px);z-index:10}
+  .bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .logo{display:flex;align-items:center;gap:11px;font-weight:600;letter-spacing:.2px}
+  nav{margin-left:auto;display:flex;gap:22px;flex-wrap:wrap}
+  nav a{color:var(--dim);text-decoration:none;font-size:14.5px}
+  nav a:hover{color:var(--accent)}
+
+  .hero{padding:86px 0 66px;border-bottom:1px solid var(--line)}
+  h1{font-size:clamp(30px,5.4vw,50px);line-height:1.14;letter-spacing:-.9px;font-weight:650;max-width:19ch}
+  .lead{color:var(--dim);font-size:19px;margin-top:22px;max-width:60ch}
+  .tag{display:inline-block;border:1px solid var(--line);color:var(--accent);
+       border-radius:100px;padding:5px 14px;font-size:12.5px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:26px}
+
+  .nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:18px;margin-top:52px}
+  .num{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .num b{display:block;font-size:31px;font-weight:650;letter-spacing:-.5px}
+  .num span{color:var(--dim);font-size:13.5px}
+
+  section{padding:64px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:26px;letter-spacing:-.4px;margin-bottom:12px;font-weight:620}
+  .sub{color:var(--dim);margin-bottom:30px;max-width:64ch}
+
+  .roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:11px}
+  .role{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+  .role b{font-size:13px;color:var(--accent);letter-spacing:.7px;display:block;margin-bottom:3px}
+  .role span{font-size:13.5px;color:var(--dim)}
+
+  .flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px;position:relative}
+  .step i{position:absolute;top:16px;right:18px;font-style:normal;color:var(--line);font-size:30px;font-weight:700}
+  .step b{display:block;margin-bottom:7px;font-size:15px}
+  .step p{color:var(--dim);font-size:14px}
+
+  table{width:100%;border-collapse:collapse;font-size:14.5px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line)}
+  th{color:var(--dim);font-weight:500;font-size:13px;letter-spacing:.4px;text-transform:uppercase}
+  td b{color:var(--warn);font-weight:600}
+
+  .case{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px}
+  .case h3{font-size:18px;margin-bottom:6px}
+  .case .meta{color:var(--dim);font-size:13.5px;margin-bottom:18px}
+  .quote{border-left:2px solid var(--accent);padding-left:16px;color:var(--dim);margin:20px 0;font-size:15px}
+
+  .rule{display:flex;gap:13px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .rule:last-child{border:0}
+  .rule .k{color:var(--accent);font-size:13px;letter-spacing:.6px;min-width:82px;padding-top:2px}
+  .rule .v{font-size:14.5px;color:var(--dim)}
+  .rule .v b{color:var(--ink);font-weight:600}
+
+  footer{padding:40px 0 60px;color:var(--dim);font-size:13.5px}
+  a.link{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent}
+  a.link:hover{border-color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header><div class="wrap bar">
+  <div class="logo">
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+      <circle cx="13" cy="13" r="11.2" stroke="#5eead4" stroke-width="1.5"/>
+      <circle cx="13" cy="13" r="4.1" fill="#5eead4"/>
+      <path d="M13 1.8v5.4M13 18.8v5.4M1.8 13h5.4M18.8 13h5.4" stroke="#5eead4" stroke-width="1.5"/>
+    </svg>
+    Arena Studio
+  </div>
+  <nav>
+    <a href="#roles">Состав</a>
+    <a href="#how">Как работаем</a>
+    <a href="#case">Проект</a>
+    <a href="#rules">Правила</a>
+    <a href="board.html">Доска задач</a>
+  </nav>
+</div></header>
+
+<div class="wrap">
+
+<div class="hero">
+  <span class="tag">Виртуальная игровая студия</span>
+  <h1>Девятнадцать ролей, один конвейер производства игр</h1>
+  <p class="lead">Геймдизайн, системный баланс, код, графика, звук и контроль качества.
+     Каждая роль — отдельный ИИ-агент со своей зоной ответственности, правом спорить
+     с постановкой задачи и обязанностью доказывать результат.</p>
+  <div class="nums">
+    <div class="num"><b>19</b><span>ролей в штате</span></div>
+    <div class="num"><b>2</b><span>независимые проверки до сдачи</span></div>
+    <div class="num"><b>10</b><span>записей в библиотеке дефектов</span></div>
+    <div class="num"><b>0</b><span>сгенерированных ассетов</span></div>
+  </div>
+</div>
+
+<section id="roles">
+  <h2>Состав студии</h2>
+  <p class="sub">Роли не пересекаются: у каждой свой участок и свой проверяющий.
+     Спор между ролями разрешает продюсер, спор о качестве — контроль качества.</p>
+  <div class="roles">
+    <div class="role"><b>PROD</b><span>Управление проектом</span></div>
+    <div class="role"><b>GD</b><span>Геймдизайн</span></div>
+    <div class="role"><b>SYS</b><span>Баланс и экономика</span></div>
+    <div class="role"><b>LD</b><span>Уровни и сложность</span></div>
+    <div class="role"><b>NAR</b><span>Нарратив и тексты</span></div>
+    <div class="role"><b>GP</b><span>Код геймплея</span></div>
+    <div class="role"><b>TECH</b><span>Техконтроль</span></div>
+    <div class="role"><b>TOOLS</b><span>Инструменты</span></div>
+    <div class="role"><b>NET</b><span>Сеть и античит</span></div>
+    <div class="role"><b>UI</b><span>Интерфейс</span></div>
+    <div class="role"><b>CONCEPT</b><span>Концепт-арт</span></div>
+    <div class="role"><b>3D</b><span>Модели</span></div>
+    <div class="role"><b>ANIM</b><span>Анимация</span></div>
+    <div class="role"><b>VFX</b><span>Эффекты</span></div>
+    <div class="role"><b>SFX</b><span>Звуковые эффекты</span></div>
+    <div class="role"><b>MUSIC</b><span>Музыка</span></div>
+    <div class="role"><b>AUDIO</b><span>Сведение звука</span></div>
+    <div class="role"><b>QA</b><span>Контроль качества</span></div>
+    <div class="role"><b>PLAY</b><span>Игровое тестирование</span></div>
+  </div>
+</section>
+
+<section id="how">
+  <h2>Как устроено производство</h2>
+  <p class="sub">Задача проходит фиксированный путь. Пропустить этап нельзя,
+     закрыть собственную задачу исполнитель не вправе.</p>
+  <div class="flow">
+    <div class="step"><i>1</i><b>Постановка</b><p>Продюсер описывает цель, проверяемые критерии приёмки и границы: какие файлы трогать можно, какие нельзя.</p></div>
+    <div class="step"><i>2</i><b>Исполнение</b><p>Роль делает работу и сдаёт отчёт, где отдельно указано, чего проверить не удалось и почему.</p></div>
+    <div class="step"><i>3</i><b>Две проверки</b><p>Разбор результата профильной ролью и живой прогон. Без обеих проверок задача не закрывается.</p></div>
+    <div class="step"><i>4</i><b>Приёмка</b><p>Продюсер сверяет результат с критериями. Несовпадение хотя бы одного — возврат в работу.</p></div>
+  </div>
+</section>
+
+<section id="case">
+  <h2>Первый проект</h2>
+  <p class="sub">Испытательный стенд: проверить, на что способна студия, и загрузить все роли без исключения.</p>
+  <div class="case">
+    <h3>«Точка невозврата»</h3>
+    <p class="meta">Аркада на Canvas. Один файл, ноль внешних ресурсов, полностью воспроизводимый прогон.</p>
+    <table>
+      <tr><th>Показатель</th><th>Итог</th></tr>
+      <tr><td>Ролей задействовано</td><td>19 из 19</td></tr>
+      <tr><td>Скрытых ошибок подброшено продюсером</td><td>3 — найдены все три</td></tr>
+      <tr><td>Игровых прогонов</td><td>21, с проверкой вырожденных стратегий</td></tr>
+      <tr><td>Найдено дефектов</td><td><b>8, из них 4 критических</b></td></tr>
+      <tr><td>Вердикт по сборке</td><td><b>Не принята</b></td></tr>
+    </table>
+    <div class="quote">Статическая проверка нашла ошибки в коде. Игровая нашла то, чего в коде не видно:
+      правила написаны верно, но игра по ним не работает. Механика множителя оказалась недостижима,
+      а бездействие приносило почти тот же результат, что и осмысленная игра.</div>
+    <p style="color:var(--dim);font-size:14.5px">Как испытание студии проект удался: производственный
+      конвейер выдержал нагрузку, а брак был пойман внутри компании и не дошёл до заказчика.</p>
+  </div>
+</section>
+
+<section id="rules">
+  <h2>Правила, которые мы не нарушаем</h2>
+  <p class="sub">Выведены из собственных ошибок, а не из общих соображений.</p>
+  <div class="rule"><div class="k">ART-001</div><div class="v"><b>Ассеты делаются вручную.</b> Генерация нейросетями запрещена. У каждого ассета есть запись о происхождении: кто, чем и когда его сделал.</div></div>
+  <div class="rule"><div class="k">OPS-001</div><div class="v"><b>Два прогона обязательны.</b> Разбор результата и живая проверка. Правило окупилось на первом же применении: живой прогон нашёл два критических дефекта, невидимых при чтении кода.</div></div>
+  <div class="rule"><div class="k">OPS-003</div><div class="v"><b>Каждый дефект попадает в библиотеку.</b> Перед новой задачей роль сверяется со списком прошлых ошибок. Одну ошибку студия совершает один раз.</div></div>
+  <div class="rule"><div class="k">OPS-004</div><div class="v"><b>После проекта — разбор.</b> Что сработало, что сломалось, что меняем. Без этого опыт остаётся в чужой голове.</div></div>
+  <div class="rule"><div class="k">Честность</div><div class="v"><b>Непроверенное не объявляется готовым.</b> Блокеры и техдолг не скрываются. «Не проверил, потому что не было сборки» — приемлемый ответ. «Работает» без доказательства — нет.</div></div>
+</section>
+
+<footer>
+  Arena Studio · виртуальная игровая студия<br>
+  Рабочая доска задач: <a class="link" href="board.html">открыть</a>
+</footer>
+
+</div>
+</body>
+</html>

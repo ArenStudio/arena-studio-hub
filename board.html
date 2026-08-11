@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Доска задач — Arena Studio</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#0b0d11;--panel:#12151c;--line:#1e232e;--ink:#e8eaf0;--dim:#8b93a7;--accent:#5eead4;--warn:#fbbf24;--bad:#f87171}
+  body{background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px}
+  header{border-bottom:1px solid var(--line);padding:20px 0}
+  .bar{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .logo{font-weight:600;display:flex;align-items:center;gap:10px}
+  nav{margin-left:auto}
+  nav a{color:var(--dim);text-decoration:none;font-size:14.5px}
+  nav a:hover{color:var(--accent)}
+  h1{font-size:27px;margin:36px 0 8px;letter-spacing:-.4px}
+  .sub{color:var(--dim);margin-bottom:26px;font-size:15px;max-width:66ch}
+  .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:40px}
+  .col{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-height:120px}
+  .col h2{font-size:13px;letter-spacing:.7px;text-transform:uppercase;color:var(--dim);font-weight:500;margin-bottom:14px;display:flex;justify-content:space-between}
+  .col h2 em{font-style:normal;color:var(--line)}
+  .card{background:#171b24;border:1px solid var(--line);border-radius:9px;padding:12px 13px;margin-bottom:9px}
+  .card b{font-size:13px;color:var(--accent);letter-spacing:.5px}
+  .card p{font-size:14px;color:var(--dim);margin-top:4px}
+  .empty{color:var(--line);font-size:14px;padding:8px 0}
+  .state{padding:14px 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-size:14.5px;color:var(--dim);margin-bottom:26px}
+  .state b{color:var(--warn)}
+  code{background:#171b24;border:1px solid var(--line);border-radius:5px;padding:1.5px 6px;font-size:13px;color:var(--accent);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  footer{padding:34px 0 56px;color:var(--dim);font-size:13.5px;border-top:1px solid var(--line);margin-top:20px}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <div class="logo">
+    <svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="11.2" stroke="#5eead4" stroke-width="1.5"/><circle cx="13" cy="13" r="4.1" fill="#5eead4"/></svg>
+    Arena Studio
+  </div>
+  <nav><a href="index.html">← На главную</a></nav>
+</div></header>
+
+<div class="wrap">
+  <h1>Доска задач</h1>
+  <p class="sub">Задачи хранятся файлами в репозитории студии. Страница читает их напрямую
+     через открытый интерфейс GitHub — своего сервера нет, поднимать и оплачивать нечего.</p>
+
+  <div class="state" id="state">Загружаю задачи…</div>
+
+  <div class="cols">
+    <div class="col"><h2>Готово к работе <em id="c1">0</em></h2><div id="ready"></div></div>
+    <div class="col"><h2>В работе <em id="c2">0</em></h2><div id="progress"></div></div>
+    <div class="col"><h2>Закрыто <em id="c3">0</em></h2><div id="done"></div></div>
+  </div>
+
+  <footer>
+    Данные берутся из репозитория <code>ArenStudio/arena-studio-hub</code>.<br>
+    Задачу может создать и закрыть только продюсер. Агенты читают доску без регистрации.
+  </footer>
+</div>
+
+<script>
+const OWNER="ArenStudio", REPO="arena-studio-hub", BRANCH="main";
+const cols={ready:"tasks/ready",progress:"tasks/in_progress",done:"tasks/done"};
+const counter={ready:"c1",progress:"c2",done:"c3"};
+
+async function load(key,path){
+  const box=document.getElementById(key);
+  try{
+    const r=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`);
+    if(!r.ok) throw new Error(r.status);
+    const files=(await r.json()).filter(f=>f.name.endsWith(".md"));
+    document.getElementById(counter[key]).textContent=files.length;
+    if(!files.length){ box.innerHTML='<div class="empty">пусто</div>'; return 0; }
+    box.innerHTML=files.map(f=>{
+      const id=f.name.replace(/\.md$/,"");
+      return `<div class="card"><b>${id}</b><p><a href="${f.html_url}" style="color:#8b93a7">открыть задачу →</a></p></div>`;
+    }).join("");
+    return files.length;
+  }catch(e){
+    box.innerHTML='<div class="empty">нет данных</div>';
+    return -1;
+  }
+}
+(async()=>{
+  const res=await Promise.all(Object.entries(cols).map(([k,p])=>load(k,p)));
+  const st=document.getElementById("state");
+  if(res.every(v=>v===-1)){
+    st.innerHTML='<b>Репозиторий пока не опубликован.</b> Доска заработает сама, как только продюсер выложит его на GitHub — код страницы менять не нужно.';
+  }else{
+    st.textContent="Доска подключена к репозиторию студии. Обновляется при каждой перезагрузке страницы.";
+  }
+})();
+</script>
+</body>
+</html>
